@@ -27,9 +27,9 @@ MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l)
 	Node* v = root;
 	Node* u;
 	while( a != n ){
-		int sig = sig + 1;
+		int sig = sig1 + 1;
 		if( a >= 0 && sig != A.size() ){
-			if(p != 1 || A[sig] != H[a] ){
+			if( p != 1 || A[sig] != H[a] ){
 				if( p * P[a][sig] * z < 1 ){
 					continue;
 				}else{
@@ -63,8 +63,7 @@ MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l)
 					u->self_free();
 					u = nullptr;
 				}
-			}
-			
+			}			
 			u = v;
 			a = a + 1;
 			sig1 = amap[S[0]];
