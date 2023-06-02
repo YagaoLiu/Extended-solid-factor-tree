@@ -50,9 +50,26 @@ MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l)
 		}else{
 			v = u->parent();
 			if(p < 1){
-				p /= P[a][amap[S[0]]];
+				p /= P[a][amap[S[0]]]; ///check
+			}
+			if(minimizers.find(a) != minimizers.end()){
+				u->setMinimizer();
+				minimizers.erase(a);
+			}else{
+				if(u->c_num() == 1){
+					v->eat(u);
+				}
+				if(u->c_num() == 0){
+					u->self_free();
+					u = nullptr;
+				}
+			}
 			
-				
+			u = v;
+			a = a + 1;
+			sig1 = amap[S[0]];
+			S = S.substr(1);
+		}
 	}
 }
 
