@@ -4,7 +4,10 @@
 
 using namespace std;
 
-MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l){
+setNode* SolidExtTree::setNode::addChild()
+
+
+SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 	vector<double> pi_arr;
 	for(auto i = 0; i < P.size(); i++){
 		int which_max = max_element(P[i].begin(), P[i].end()) - P[i].begin();
@@ -48,7 +51,7 @@ MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l)
 			v = u;
 			sig1 = -1;
 		}else{
-			v = u->parent();
+			v = u->parent;
 			if(p < 1){
 				p /= P[a][amap[S[0]]]; ///check
 			}
@@ -72,4 +75,12 @@ MinSolFacTree::MinSolFacTree(vector<vector<double>> &P, string &A, int k, int l)
 	}
 }
 
-
+int SolidExtTree::find_minimzer_index (string& s, int k){
+	  int  minimizer_index = 0;
+  for (int i = 1; i <= s.length() - k; i++) {
+    if (s.substr(i, k) < s.substr(minimizer_index, k)) {
+      minimizer_index = i;
+    }
+  }
+  return minimizer_index;
+}
