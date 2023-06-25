@@ -26,6 +26,7 @@
 
 #include "heavy_string.h"
 #include "input.h"
+#include "solid_extend_tree.h"
 
 using namespace std;
 using get_time = chrono::steady_clock;
@@ -38,9 +39,9 @@ int main (int argc, char ** argv )
 	ofstream result;
 	
 	auto begin = get_time::now();
-	struct mallinfo2 mi;
-    mi = mallinfo2();
-	double begin_ram = mi.hblkhd + mi.uordblks;
+	// struct mallinfo2 mi;
+    // mi = mallinfo2();
+	// double begin_ram = mi.hblkhd + mi.uordblks;
 	
 	double z = st.z;
 	int ell = st.ell;
@@ -59,7 +60,7 @@ int main (int argc, char ** argv )
             text_file >> symbol[j];
             sum += symbol[j];
         }
-        if (abs(sum-1) > EPS) {
+        if (abs(sum-1) > 1e9) {
             cerr << "Probabilities at position " << i << " do not sum up to 1" << endl;
             throw 1;
         }
@@ -73,13 +74,13 @@ int main (int argc, char ** argv )
 
 
 
-	mi = mallinfo2();
+	// mi = mallinfo2();
 	
-	double end_ram = mi.hblkhd + mi.uordblks;
+	// double end_ram = mi.hblkhd + mi.uordblks;
 	auto end = get_time::now();
 	auto diff2 = end - begin;
 	output_file << "CT "<< chrono::duration_cast<chrono::milliseconds>(diff2).count()<<endl;	
-	output_file << "CS " << (end_ram-begin_ram)/1000000 << endl;
+	// output_file << "CS " << (end_ram-begin_ram)/1000000 << endl;
 
 	return 0;
 }

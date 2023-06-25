@@ -8,9 +8,9 @@ LFLAGS= -std=c++11 -O3 -DNDEBUG -lboost_iostreams -I ./libsdsl/include/ -L ./lib
 
 EXE=   index 
  
-SRC=    main.cpp input.cpp sa.cpp estimation.cpp property_string.cpp anchors_new.cpp pattern_matching.cpp heavy_string.cpp
+SRC=    main.cpp input.cpp heavy_string.cpp solid_extend_tree.cpp
 
-HD=     sa.h defs.h input.h estimation.h  property_string.h anchors_new.h heavy_string.h pattern_matching.h Makefile
+HD=     input.h heavy_string.h solid_extend_tree.h Makefile
 
 # 
 # No need to edit below this line 

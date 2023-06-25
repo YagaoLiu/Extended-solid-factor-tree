@@ -1,11 +1,47 @@
-#include 'msft.h'
-#include <unordered_set>
 #include <cmath>
+#include "solid_extend_tree.h"
 
 using namespace std;
 
-setNode* SolidExtTree::setNode::addChild()
+setNode* SolidExtTree::setNode::addChild(int ind){
+	setNode* child = new setNode;
+	child->pos = ind;
+	this->children.insert(child);
+	return child;
+}
 
+void SolidExtTree::setNode::setDiff(stack<pair<int, char>>& diff){
+	stack<pair<int, char> d_copy = diff;
+	while(!d_copy.empty()){
+		auto p = d_copy.top();
+		children.insert(p);
+		d_copy.pop();
+	}
+}
+
+void SolidExtTree::setNode::eat(setNode* child){
+	setNode* grandchild = *child->children.begin();
+	grandchild->parent = this;
+	this->children.erase(child);
+	this->children.insert(grandchild);
+	child->children.clear();
+	delete child;
+}
+
+SolidExtTree::setNode::~setNode(){
+	for (auto child : children) {
+		delete child;
+	}
+	unordered_set<setNode*>().swap(children);
+	unordered_map<int,char*>().swap(alt);
+	delete this;
+}
+
+
+void SolidExtTree::setNode::self_free(){
+	parent = nullptr;
+	vector<setNode*>().swap(children);
+	
 
 SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 	vector<double> pi_arr;
@@ -26,6 +62,7 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 	double p = 1;
 	int a = n-1;
 	unordered_set<int> minimizers;
+	stack<pair<int, char>> diff;
 	int sig1 = -1;
 	Node* v = root;
 	Node* u;
@@ -40,9 +77,9 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 				}
 			}
 			S = A[sig] + S;
-			u = v.addChild(A[sig]);
+			u = v.addChild(a);
 			if(H[a] != A[sig]){
-				u->addDiff(a,A[sig]);
+				diff.emplace(a, A[sig]);
 			}
 			if(S.size > l){
 				minimizers.insert(a + find_minimzer_index(S.substr(0,l), k));
@@ -58,15 +95,20 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 			if(minimizers.find(a) != minimizers.end()){
 				u->setMinimizer();
 				minimizers.erase(a);
+				u->setDiff(diff);
 			}else{
 				if(u->c_num() == 1){
 					v->eat(u);
-				}
-				if(u->c_num() == 0){
-					u->self_free();
 					u = nullptr;
 				}
-			}			
+				if(u->c_num() == 0){
+					delete u;
+					u = nullptr;
+				}
+				if (diff.top().first == a) {
+					diff.pop();
+				}
+			}
 			u = v;
 			a = a + 1;
 			sig1 = amap[S[0]];
