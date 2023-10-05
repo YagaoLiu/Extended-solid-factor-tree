@@ -1,20 +1,20 @@
 #include <cmath>
+#include <algorithm>
 #include "solid_extend_tree.h"
 
 using namespace std;
 
-setNode* SolidExtTree::setNode::addChild(int ind){
-	setNode* child = new setNode;
-	child->pos = ind;
+SolidExtTree::setNode* SolidExtTree::setNode::addChild(int ind){
+	setNode* child = new setNode(ind, this);
 	this->children.insert(child);
 	return child;
 }
 
 void SolidExtTree::setNode::setDiff(stack<pair<int, char>>& diff){
-	stack<pair<int, char> d_copy = diff;
+	stack<pair<int, char> > d_copy = diff;
 	while(!d_copy.empty()){
 		auto p = d_copy.top();
-		children.insert(p);
+		alts.insert(p);
 		d_copy.pop();
 	}
 }
@@ -33,17 +33,11 @@ SolidExtTree::setNode::~setNode(){
 		delete child;
 	}
 	unordered_set<setNode*>().swap(children);
-	unordered_map<int,char*>().swap(alt);
-	delete this;
+	unordered_map<int, char>().swap(alts);
 }
-
-
-void SolidExtTree::setNode::self_free(){
-	parent = nullptr;
-	vector<setNode*>().swap(children);
 	
 
-SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
+SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l, double z){
 	vector<double> pi_arr;
 	for(auto i = 0; i < P.size(); i++){
 		int which_max = max_element(P[i].begin(), P[i].end()) - P[i].begin();
@@ -52,7 +46,7 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 		pi_arr.push_back(pi);
 	}
 	int n = P.size();
-	Node* root = new Node;
+	setNode* root = new setNode;
 	unordered_map<char, int> amap;
 	for(int i = 0; i < A.size(); i++){
 		amap[i] = A[i];
@@ -64,32 +58,39 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 	unordered_set<int> minimizers;
 	stack<pair<int, char>> diff;
 	int sig1 = -1;
-	Node* v = root;
-	Node* u;
+	setNode* v = root;
+	setNode* u;
 	while( a != n ){
+		cout << a << endl;
 		int sig = sig1 + 1;
 		if( a >= 0 && sig != A.size() ){
+			cout << A[sig] << endl;
 			if( p != 1 || A[sig] != H[a] ){
 				if( p * P[a][sig] * z < 1 ){
+					sig1 = sig;
 					continue;
 				}else{
 					p *= P[a][sig];
 				}
 			}
-			S = A[sig] + S;
-			u = v.addChild(a);
+			S.insert(0, 1, A[sig]);
+			u = v->addChild(a);
 			if(H[a] != A[sig]){
 				diff.emplace(a, A[sig]);
 			}
-			if(S.size > l){
-				minimizers.insert(a + find_minimzer_index(S.substr(0,l), k));
+			if(S.size() > l){
+				string prefixS = S.substr(0,l);
+				minimizers.insert(a + find_minimzer_index(prefixS, k));
 			}
 			a = a - 1;
 			v = u;
 			sig1 = -1;
 		}else{
+			cout << "second part" << endl;	
+			if(a != -1) cout << P[a][amap[S[0]]] << endl;
+			else cout << S << endl;
 			v = u->parent;
-			if(p < 1){
+			if(p < 1 && a >= 0){
 				p /= P[a][amap[S[0]]]; ///check
 			}
 			if(minimizers.find(a) != minimizers.end()){
@@ -97,15 +98,17 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 				minimizers.erase(a);
 				u->setDiff(diff);
 			}else{
+				if(u->c_num() == 0){
+					cout << 1 << endl;
+					delete u;
+				}
 				if(u->c_num() == 1){
+					cout << 2 << endl;
 					v->eat(u);
 					u = nullptr;
 				}
-				if(u->c_num() == 0){
-					delete u;
-					u = nullptr;
-				}
 				if (diff.top().first == a) {
+					cout << 3 << endl;
 					diff.pop();
 				}
 			}
@@ -118,11 +121,29 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l){
 }
 
 int SolidExtTree::find_minimzer_index (string& s, int k){
-	  int  minimizer_index = 0;
-  for (int i = 1; i <= s.length() - k; i++) {
-    if (s.substr(i, k) < s.substr(minimizer_index, k)) {
-      minimizer_index = i;
-    }
-  }
-  return minimizer_index;
+	int  minimizer_index = 0;
+	for (int i = 1; i <= s.length() - k; i++) {
+		if (s.substr(i, k) < s.substr(minimizer_index, k)) {
+		  minimizer_index = i;
+		}
+	}
+	return minimizer_index;
+}
+
+string SolidExtTree::NodeString( setNode* u ){
+	int begin = u->parent->pos+1;
+	int l = u->pos - begin + 1;
+	string tempH = H;
+	if(!u->alts.empty()){
+		for(auto alt : u->alts){
+			tempH[alt.first] = alt.second;
+		}
+	}
+	string uStr = tempH.substr(begin, l);		
+	return uStr;
+}
+
+void SolidExtTree::DFS_traverse(){
+	stack<setNode*> s;
+	
 }
