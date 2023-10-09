@@ -49,7 +49,7 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l, d
 	setNode* root = new setNode;
 	unordered_map<char, int> amap;
 	for(int i = 0; i < A.size(); i++){
-		amap[i] = A[i];
+		amap[A[i]] = i;
 	}
 	
 	string S;
@@ -61,10 +61,9 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l, d
 	setNode* v = root;
 	setNode* u;
 	while( a != n ){
-		cout << a << endl;
+		cout << "a=" << a << endl;
 		int sig = sig1 + 1;
-		if( a >= 0 && sig != A.size() ){
-			cout << A[sig] << endl;
+		if( a >= 0 && sig != A.size() ){		
 			if( p != 1 || A[sig] != H[a] ){
 				if( p * P[a][sig] * z < 1 ){
 					sig1 = sig;
@@ -86,12 +85,9 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l, d
 			v = u;
 			sig1 = -1;
 		}else{
-			cout << "second part" << endl;	
-			if(a != -1) cout << P[a][amap[S[0]]] << endl;
-			else cout << S << endl;
 			v = u->parent;
-			if(p < 1 && a >= 0){
-				p /= P[a][amap[S[0]]]; ///check
+			if(p < 1){
+				p /= P[a+1][amap[S[0]]];
 			}
 			if(minimizers.find(a) != minimizers.end()){
 				u->setMinimizer();
@@ -99,23 +95,20 @@ SolidExtTree::SolidExtTree(vector<vector<double>> &P, string &A, int k, int l, d
 				u->setDiff(diff);
 			}else{
 				if(u->c_num() == 0){
-					cout << 1 << endl;
 					delete u;
 				}
 				if(u->c_num() == 1){
-					cout << 2 << endl;
 					v->eat(u);
 					u = nullptr;
 				}
 				if (diff.top().first == a) {
-					cout << 3 << endl;
 					diff.pop();
 				}
 			}
 			u = v;
 			a = a + 1;
 			sig1 = amap[S[0]];
-			S = S.substr(1);
+			if(S.length() > 0) S = S.substr(1);
 		}
 	}
 }
@@ -141,9 +134,4 @@ string SolidExtTree::NodeString( setNode* u ){
 	}
 	string uStr = tempH.substr(begin, l);		
 	return uStr;
-}
-
-void SolidExtTree::DFS_traverse(){
-	stack<setNode*> s;
-	
 }
