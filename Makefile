@@ -4,13 +4,13 @@ CC=     g++
  
 CFLAGS= -g -fopenmp -msse4.2 -fomit-frame-pointer -funroll-loops 
  
-LFLAGS= -std=c++11 -O3 -DNDEBUG -lboost_iostreams -I ./libsdsl/include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 -Wl,-rpath=$(PWD)/libsdsl/lib
+LFLAGS= -std=c++11 -O3 -DNDEBUG -lboost_iostreams 
 
 EXE=   index 
  
-SRC=    main.cpp input.cpp heavy_string.cpp solid_extend_tree.cpp
+SRC=    main.cpp input.cpp heavy_string.cpp solid_extend_tree.cpp krfp.cpp utils.cpp
 
-HD=     input.h heavy_string.h solid_extend_tree.h Makefile
+HD=     input.h heavy_string.h solid_extend_tree.h krfp.h utils.h Makefile
 
 # 
 # No need to edit below this line 

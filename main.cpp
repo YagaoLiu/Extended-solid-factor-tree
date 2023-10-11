@@ -27,6 +27,8 @@
 #include "heavy_string.h"
 #include "input.h"
 #include "solid_extend_tree.h"
+#include "krfp.h"
+
 
 using namespace std;
 using get_time = chrono::steady_clock;
@@ -49,6 +51,7 @@ int main (int argc, char ** argv )
 	string alphabet;
 	vector<vector<double>> text;
 
+		karp_rabin_hashing::init();
 	int   N;
 	text_file >> N;
 	text_file >> alphabet;
@@ -69,9 +72,13 @@ int main (int argc, char ** argv )
 	
 	int k = ceil(4 * log2(ell) / log2(alphabet.size()));
 	int w = ell - k + 1;
-
 	
-
+	cout << "finish reading" << endl;
+	SolidExtTree SET(text, alphabet, 3, 4, z);
+	cout << "Solid Extend Tree finish" << endl;
+	SET.bfs();
+	cout << endl;
+	SET.dfs();
 
 
 	// mi = mallinfo2();
