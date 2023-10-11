@@ -23,8 +23,8 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <malloc.h>
+#include <cmath>
 
-#include "heavy_string.h"
 #include "input.h"
 #include "solid_extend_tree.h"
 #include "krfp.h"
@@ -74,8 +74,9 @@ int main (int argc, char ** argv )
 	int w = ell - k + 1;
 	
 	cout << "finish reading" << endl;
-	SolidExtTree SET(text, alphabet, 3, 4, z);
+	SolidExtTree SET(text, alphabet, k, ell, z);
 	cout << "Solid Extend Tree finish" << endl;
+	
 	SET.bfs();
 	cout << endl;
 	SET.dfs();
